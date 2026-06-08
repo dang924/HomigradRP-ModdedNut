@@ -1,24 +1,37 @@
 ENT.Base = "base_brush"
 ENT.Type = "brush"
 
+if SERVER and not ZC_MapRoute then
+	include("autorun/sh_zc_map_route.lua")
+end
+
+local function ResolveActualMapName(name)
+	if not isstring(name) or name == "" then return "" end
+	if ZC_MapRoute and ZC_MapRoute.GetActualMap then
+		return tostring(ZC_MapRoute.GetActualMap(name) or name)
+	end
+	return tostring(name)
+end
 
 -- Called when the entity first spawns
 function ENT:Initialize()
+	-- self.min / self.max may be nil during game.CleanUpMap() respawn
+	if self.min and self.max then
+		local w = self.max.x - self.min.x
+		local l = self.max.y - self.min.y
+		local h = self.max.z - self.min.z
 
-	local w = self.max.x - self.min.x
-	local l = self.max.y - self.min.y
-	local h = self.max.z - self.min.z
+		local min = Vector( 0 - ( w / 2 ), 0 - ( l / 2 ), 0 - ( h / 2 ) )
+		local max = Vector( w / 2, l / 2, h / 2 )
 
-	local min = Vector( 0 - ( w / 2 ), 0 - ( l / 2 ), 0 - ( h / 2 ) )
-	local max = Vector( w / 2, l / 2, h / 2 )
+		self:SetCollisionBounds( min, max )
+	end
 
 	self:DrawShadow( false )
-	self:SetCollisionBounds( min, max )
 	self:SetSolid( SOLID_BBOX )
 	self:SetCollisionGroup( COLLISION_GROUP_WORLD )
 	self:SetMoveType( 0 )
 	self:SetTrigger( true )
-
 end
 
 hg = hg or {}
@@ -48,7 +61,7 @@ function ENT:StartTouch( ent )
         ent:KillSilent()
 	
 		hg.MapCompleted = true
-		hg.NextMap = self.map or ""
+		hg.NextMap = ResolveActualMapName(self.map or "")
 	end
 
 end

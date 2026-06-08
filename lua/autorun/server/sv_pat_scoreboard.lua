@@ -4,11 +4,13 @@ AddCSLuaFile()
 
 PATSB = PATSB or {}
 PATSB.SettingsFile = "pat_scoreboard_shared.json"
-PATSB.PlaytimeFile = "pat_scoreboard_playtime.json"
 
 util.AddNetworkString("PATSB_RequestSettings")
 util.AddNetworkString("PATSB_SendSettings")
 util.AddNetworkString("PATSB_SaveSettings")
+
+-- SQL-based persistent playtime (avoids JSON scientific-notation key corruption)
+sql.Query("CREATE TABLE IF NOT EXISTS pat_scoreboard_playtime ( steamid TEXT PRIMARY KEY, seconds INTEGER )")
 
 local function colorData(r, g, b, a)
     return {
@@ -40,7 +42,7 @@ PATSB.Defaults = {
     show_spectators = true,
     show_karma = true,
     show_session = true,
-    show_playtime = false,
+    show_playtime = true,
     show_tickrate = true,
     show_voice_buttons = true,
     show_bottom_mute_buttons = true,
@@ -168,18 +170,40 @@ function PATSB:SaveSettings()
 end
 
 function PATSB:LoadPlaytimeData()
-    local raw = file.Read(self.PlaytimeFile, "DATA")
-    if not raw or raw == "" then
-        self.PlaytimeData = {}
-        return
+    self.PlaytimeData = {}
+    local rows = sql.Query("SELECT steamid, seconds FROM pat_scoreboard_playtime;")
+    if istable(rows) then
+        for _, row in ipairs(rows) do
+            self.PlaytimeData[tostring(row.steamid)] = math.max(0, tonumber(row.seconds) or 0)
+        end
     end
 
-    local data = util.JSONToTable(raw)
-    self.PlaytimeData = istable(data) and data or {}
+    -- One-time migration from old JSON file
+    local oldFile = "pat_scoreboard_playtime.json"
+    local raw = file.Read(oldFile, "DATA")
+    if raw and raw ~= "" then
+        local data = util.JSONToTable(raw)
+        if istable(data) then
+            for key, seconds in pairs(data) do
+                local sid = tostring(key)
+                local secs = math.max(0, math.floor(tonumber(seconds) or 0))
+                if sid ~= "" and secs > 0 then
+                    self.PlaytimeData[sid] = (self.PlaytimeData[sid] or 0) + secs
+                end
+            end
+            PATSB:SavePlaytimeData()
+            file.Rename(oldFile, oldFile .. ".migrated")
+            print("[PATSB] Migrated playtime data from JSON to SQL")
+        end
+    end
 end
 
 function PATSB:SavePlaytimeData()
-    file.Write(self.PlaytimeFile, util.TableToJSON(self.PlaytimeData or {}, true))
+    for steamid, seconds in pairs(self.PlaytimeData or {}) do
+        local sid = sql.SQLStr(tostring(steamid))
+        local secs = math.max(0, math.floor(tonumber(seconds) or 0))
+        sql.Query("INSERT OR REPLACE INTO pat_scoreboard_playtime (steamid, seconds) VALUES (" .. sid .. ", " .. secs .. ");")
+    end
 end
 
 function PATSB:BroadcastSettings(target)

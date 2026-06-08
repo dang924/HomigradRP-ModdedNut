@@ -582,10 +582,22 @@ hook.Add("PostCleanupMap","changelevel_generate",function()
 	tdml:SetAngles(map:GetAngles())
     tdml.min = min
     tdml.max = max
-    tdml.map = map.map
+
+    local resolvedMap = map.map
+    if ZC_MapRoute and ZC_MapRoute.GetActualMap then
+        resolvedMap = ZC_MapRoute.GetActualMap(map.map) or map.map
+    end
+    tdml.map = resolvedMap
+
     tdml:Spawn()
     tdml:Activate()
-	--map:Remove()
+
+    -- Remove original trigger_changelevel entities to prevent landmark errors
+    for _, ent in pairs(ents.FindByClass("trigger_changelevel")) do
+        if IsValid(ent) then
+            ent:Remove()
+        end
+    end
 end)
 
 function GM:EntityKeyValue( ent, key, value )

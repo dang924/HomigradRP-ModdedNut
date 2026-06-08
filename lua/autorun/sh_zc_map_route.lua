@@ -116,6 +116,9 @@ for index, actualName in ipairs(ACTUAL_CAMPAIGN_SEQUENCE) do
     end
 end
 
+-- Custom map name overrides (add your renamed maps here)
+-- (The built-in ACTUAL_CAMPAIGN_SEQUENCE already handles _d suffixed maps.)
+
 function MapRoute.NormalizeMapName(name)
     return normalizeMapName(name)
 end

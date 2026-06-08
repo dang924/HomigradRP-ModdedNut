@@ -83,6 +83,10 @@ local function getPinnedMapMode()
 		return "event"
 	end
 
+	if string.match(mapName, "^d[123]_") or mapName == "06b_d" or mapName == "07_d" then
+		return "coop"
+	end
+
 	if IsValid(ents.FindByClass( "trigger_changelevel" )[1]) then
 		return "coop"
 	end

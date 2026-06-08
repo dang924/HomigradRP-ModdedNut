@@ -1,4 +1,4 @@
-
+﻿
 MODE.name = "coop"
 MODE.PrintName = "CO-OP"
 MODE.randomSpawns = false
@@ -185,8 +185,7 @@ end
 
 function MODE:Intermission()
     self.LootTimer = CurTime() + 2
-    game.CleanUpMap()
-    
+    game.CleanUpMap(false, {"env_soundscape", "trigger_soundscape", "coop_mapend"})
 
     self.COOPPoints = zb.GetMapPoints("HMCD_COOP_SPAWN")
 

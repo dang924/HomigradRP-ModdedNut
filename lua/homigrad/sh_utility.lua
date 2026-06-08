@@ -896,9 +896,12 @@ local IsValid = IsValid
 
 		weight = math.max(weight - 1,0)
 
-		local ammo = ply:GetAmmo()
-		for id,count in pairs(ammo) do
-			weight = weight + (game.GetAmmoForce(id) * count) / 1500
+		local inCoop = isfunction(CurrentRound) and CurrentRound().name == "coop"
+		if not inCoop then
+			local ammo = ply:GetAmmo()
+			for id,count in pairs(ammo) do
+				weight = weight + (game.GetAmmoForce(id) * count) / 1500
+			end
 		end
 
 		ply.armors = ply:GetNetVar("Armor",{})

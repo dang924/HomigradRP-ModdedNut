@@ -1,4 +1,4 @@
-if CLIENT then return end
+﻿if CLIENT then return end
 
 if not ZC_MapRoute then
     include("autorun/sh_zc_map_route.lua")
@@ -22,26 +22,8 @@ local function getLandmark(ent)
     return ent.landmark or ent.LandmarkName or ent:GetInternalVariable("landmark") or ""
 end
 
-local function ShouldDisableTrigger(ent)
-    if not IsValid(ent) or ent:GetClass() ~= "trigger_changelevel" then return false end
-
-    -- Only guard the problematic skip-return path: *_town_02a -> *_town_02.
-    local map = CanonicalMapName(game.GetMap())
-    if map == "" or not string.match(map, "_town_02a$") then
-        return false
-    end
-
-    local target = CanonicalMapName(ent.map)
-    if target == "" or not string.match(target, "_town_02$") then
-        return false
-    end
-
-    return true
-end
-
 local function disableTrigger(ent, reason)
     if not IsValid(ent) or ent:GetClass() ~= "trigger_changelevel" then return end
-    if not ShouldDisableTrigger(ent) then return end
 
     if ent.SetNotSolid then ent:SetNotSolid(true) end
     if ent.SetSolid then ent:SetSolid(SOLID_NONE) end

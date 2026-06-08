@@ -95,9 +95,24 @@ function ENT:Initialize()
     end
 end
 
+local function isMedicalItem(wep)
+    if not IsValid(wep) then return false end
+    local cat = wep.Category or ""
+    if string.find(cat, "Medicine", 1, true) or string.find(cat, "Meds", 1, true) then
+        return true
+    end
+    if wep.ScrappersSlot == "Medicine" then return true end
+    if wep.MedClass then return true end
+    return false
+end
+
 function ENT:RefillHeldItem(ply)
     local wep = ply:GetActiveWeapon()
     if not IsValid(wep) then return false, "No held item" end
+
+    if not isMedicalItem(wep) then
+        return false, "Crate only refills medical items"
+    end
 
     local changed = false
     changed = refillSpecialWeaponState(wep) or changed
