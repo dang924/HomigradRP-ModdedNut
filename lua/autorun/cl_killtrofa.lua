@@ -1,9 +1,0 @@
---net.Receive("PlaySoundForClient", function()
---    local soundPath = net.ReadString()
---    if soundPath and soundPath ~= "" then
---        -- Проигрываем звук на клиенте
---        surface.PlaySound(soundPath)
---        -- Для отладки (можно удалить)
---        print("Играю звук: " .. soundPath)
---    end
---end)

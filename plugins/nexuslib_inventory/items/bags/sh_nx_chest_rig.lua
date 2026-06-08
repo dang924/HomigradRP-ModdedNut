@@ -1,0 +1,10 @@
+ITEM.name = "Chest Rig"
+ITEM.desc = "A tactical rig for mags, tools, and medicals."
+ITEM.model = "models/props_junk/cardboard_box004a.mdl"
+ITEM.category = "Gear"
+ITEM.invWidth = 3
+ITEM.invHeight = 3
+ITEM.nxGearSlot = "rig"
+ITEM.nxGearEntityClass = "nut_gear_rig"
+ITEM.nxCarryBonus = 8
+ITEM.nxWeight = 2.4

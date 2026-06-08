@@ -1,0 +1,10 @@
+ITEM.name = "Field Backpack"
+ITEM.desc = "A durable backpack with practical storage space."
+ITEM.model = "models/props_c17/suitcase001a.mdl"
+ITEM.category = "Gear"
+ITEM.invWidth = 4
+ITEM.invHeight = 4
+ITEM.nxGearSlot = "backpack"
+ITEM.nxGearEntityClass = "nut_gear_backpack"
+ITEM.nxCarryBonus = 12
+ITEM.nxWeight = 3.2

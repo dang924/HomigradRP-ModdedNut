@@ -1,7 +1,0 @@
-{
-  "title": "ZCity Merged Compatibility Build",
-  "type": "ServerContent",
-  "tags": ["zcity", "compatibility", "merged"],
-  "description": "Merged build of ZCity main and DCityPatch1.1 with unified debug command gating.",
-  "ignore": []
-}

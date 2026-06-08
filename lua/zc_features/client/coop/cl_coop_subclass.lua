@@ -1,2 +1,0 @@
--- Periodic chat reminder for !rebelclass — now handled server-side.
--- This file is intentionally minimal; the reminder logic lives in sv_coop_subclass.lua.
